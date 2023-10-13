@@ -357,7 +357,7 @@ export default {
       } else {
         this.date[1] = time
         this.hideCal = true
-        this.value = this.date
+        // this.value = this.date
         this.isStartTime = true
         this.isborder2 = false
       }
@@ -367,7 +367,7 @@ export default {
     */
     makeDateObject (val) {
       // handle support for eu date format
-      let dateAndTime = val.split(' ')
+      let dateAndTime = val[0].split(' ')
       let arr = []
       if (this.format.indexOf('-') !== -1) {
         arr = dateAndTime[0].split('-')
@@ -412,8 +412,8 @@ export default {
       return date
     },
     clearDate(){
-      this.date = ''
-      this.$emit('input', '')
+      this.date = []
+      // this.$emit('input', '')
       // this.toggleCal ()
     },
     chooseDateRange() {
@@ -456,26 +456,26 @@ export default {
     this.setPeriodStyle()
   },
   watch: {
-    // value (newVal, oldVal) {
-    //   if (newVal) {
-    //     this.value = newVal;
-    //     try {
-    //       this.timeStamp = this.makeDateObject(this.value)
-    //     } catch (e) {
-    //       console.warn(e.message +'. Current date is being used.')
-    //       this.timeStamp = new Date()
-    //     }
-    //     this.year = this.timeStamp.getFullYear()
-    //     this.monthIndex = this.timeStamp.getMonth()
-    //     this.day = this.timeStamp.getDate()
-    //     this.hour = this.timeStamp.getHours()
-    //     this.hour = this.hour < 10 ? '0' + this.hour : '' + this.hour
-    //     this.minute = this.timeStamp.getMinutes()
-    //     this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
-    //     this.updateCalendar()
-    //     this.setDate()
-    //   }
-    // }
+    value (newVal, oldVal) {
+      if (newVal) {
+        this.value = newVal;
+        try {
+          this.timeStamp = this.makeDateObject(this.value)
+        } catch (e) {
+          console.warn(e.message +'. Current date is being used.')
+          this.timeStamp = new Date()
+        }
+        this.year = this.timeStamp.getFullYear()
+        this.monthIndex = this.timeStamp.getMonth()
+        this.day = this.timeStamp.getDate()
+        this.hour = this.timeStamp.getHours()
+        this.hour = this.hour < 10 ? '0' + this.hour : '' + this.hour
+        this.minute = this.timeStamp.getMinutes()
+        this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
+        this.updateCalendar()
+        this.setDate()
+      }
+    }
   },
   destroyed: function () {
     document.removeEventListener('keydown', this.keyIsDown)

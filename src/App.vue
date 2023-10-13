@@ -13,8 +13,8 @@ import dateRange from './libs/date-range.vue'
 export default {
   data () {
     return {
-      val: '',
-      val2:[]
+      val: '2023-10-12 09:36:00',
+      val2:['2023-10-12 09:36:00','2023-10-12 09:36:00']
     }
   },
   components: {
