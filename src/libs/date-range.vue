@@ -1,9 +1,9 @@
 <template>
-    <div :style='{width:width}' class='date-range-container' @click="chooseDateRange" v-on:click='calendarClicked($event)'>
+    <div :style='{width:width}' class='date-range-container' @click.stop="chooseDateRange" v-on:click='calendarClicked($event)'>
       <div class="date-box" id="tj-datetime-input1">
-        <input ref="inputDomL" type="text">
+        <input ref="inputDomL" :class="{borderB:isborder1}" type="text" :value="this.date[0]">
         <span>~</span>
-        <input ref="inputDomR" type="text">
+        <input ref="inputDomR" :class="{borderB:isborder2}" type="text" :value="this.date[1]">
       </div>
       <div>
         <div class='calender-div' :class='{noDisplay: hideCal}'>
@@ -65,8 +65,8 @@
             </div>
           
           </div>
-          <button type='button' v-on:click='clearDate' class='okButton'>清除</button>
-          <button type='button' v-on:click='setDate' class='okButton ok'>确定</button>
+          <button type='button' v-on:click.stop='clearDate' class='okButton'>清除</button>
+          <button type='button' v-on:click.stop='setDate' class='okButton ok'>确定</button>
         </div>
       </div>
     </div>
@@ -124,7 +124,7 @@ export default {
   },
   data () {
     return {
-      date: [this.startTime, this.endtime],
+      date:this.value,
       isStartTime:true,
       hideCal: true,
       activePort: null,
@@ -144,6 +144,8 @@ export default {
       period: AM,
       periodStyle: 12,
       monthStr: '',
+      isborder1:false,
+      isborder2:false
     }
   },
   // mounted() {
@@ -297,9 +299,10 @@ export default {
       }
     },
     documentClicked (event) {
-      console.log(event.target);
       if (event.target.id !== 'tj-datetime-input1') {
         this.hideCal = true
+        this.isborder1 = false
+        this.isborder2 = false
       }
     },
     // toggleCal () {
@@ -349,10 +352,14 @@ export default {
         this.isStartTime = false
         this.date[0] = time
         this.$refs.inputDomR.focus()
+        this.isborder2 = true
+        this.isborder1 = false
       } else {
         this.date[1] = time
-        this.hideCal = false
+        this.hideCal = true
         this.value = this.date
+        this.isStartTime = true
+        this.isborder2 = false
       }
     },
     /**
@@ -411,7 +418,7 @@ export default {
     },
     chooseDateRange() {
       this.hideCal = false
-      this.isStarttime = true
+      this.isborder1 = true
       this.$refs.inputDomL.focus()
     }
   },
@@ -566,6 +573,9 @@ export default {
   padding: 0 20px;
   border: 1px solid #ddd;
   background-color: #fff;
+  .borderB {
+    border-bottom:2px solid #4096ff !important;
+  }
   .date-box {
     display: flex;
     align-items: center;

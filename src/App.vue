@@ -2,7 +2,7 @@
     <div class='container'>
       <datetime-picker width="300px" v-model="val"/>
       <div>111</div>
-      <date-range v-model="val2"/>
+      <date-range v-model="val2" format="YYYY-MM-DD H:i:s" width="400px"/>
       <button @click="getTime" >获取时间</button>
     </div>
 </template>
