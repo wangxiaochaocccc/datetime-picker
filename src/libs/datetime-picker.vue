@@ -343,6 +343,7 @@ export default {
     `*Creates a date object from a given date string
     */
     makeDateObject (val) {
+      console.log(val);
       // handle support for eu date format
       let dateAndTime = val.split(' ')
       let arr = []
