@@ -3,7 +3,7 @@
       <div class="date-box" id="tj-datetime-input1">
         <input ref="inputDomL" :class="{borderB:isborder1}" type="text" :value="this.date[0]">
         <span>~</span>
-        <input ref="inputDomR" :class="{borderB:isborder2}" type="text" :value="this.date[1]">
+        <input ref="inputDomR" class="inputR" :class="{borderB:isborder2}" type="text" :value="this.date[1]">
       </div>
       <div>
         <div class='calender-div' :class='{noDisplay: hideCal}'>
@@ -11,22 +11,22 @@
             <div :class='{noDisplay: hideDate}' class="left-box">
               <div class='year-month-wrapper'>
                 <div class='month-setter'>
-                  <button type='button' class='nav-l' v-on:click='leftYear'>&#x3C;</button>
+                  <button type='button' class='nav-l' v-on:click.stop='leftYear' >&#x3C;</button>
                   <span class='year'>{{year}}</span>
-                  <button type='button' class='nav-r' v-on:click='rightYear' >&#x3E;</button>
+                  <button type='button' class='nav-r' v-on:click.stop='rightYear' >&#x3E;</button>
                 </div>
                 <div class='month-setter'>
-                  <button type='button' class='nav-l' v-on:click='leftMonth'>&#x3C;</button>
+                  <button type='button' class='nav-l' v-on:click.stop='leftMonth' >&#x3C;</button>
                   <span class='month'>{{month}}</span>
-                  <button type='button' class='nav-r' v-on:click='rightMonth'>&#x3E;</button>
+                  <button type='button' class='nav-r' v-on:click.stop='rightMonth'>&#x3E;</button>
                 </div>
               </div>
               <div class='headers'>
                 <span class='days' v-for="port in days" :key="port">{{port}}</span>
               </div>
-              <div>
+              <div class="day-box">
                 <div class="week" v-for="(week, weekIndex) in weeks" :key="weekIndex">
-                  <span class="port" v-for="(day, dayIndex) in week" :key="dayIndex" v-on:click.stop='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort}'>
+                  <span :data1="dayIndexAll" class="port" v-for="(day, dayIndex) in week" :key="dayIndex" v-on:click.stop='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort,noPointer:(isNoPorinter&&(weekIndex*7 + dayIndex) < dayIndexAll)||(year<=isNoPorinterYear&&monthIndex<=isNoPorinterMonthindex)}'>
                     {{day}}
                   </span>
                 </div>
@@ -43,11 +43,17 @@
                 <div class='minute-selector' >
                   <div v-on:click.stop='showMinuteSelector' id='j-minute'>{{minute}}</div>
                 </div>
-                <div class='time-separator' v-if='periodStyle === 12'>
+                <div class='time-separator'>
                   <span>:</span>
                 </div>
-                <div class='minute-selector' v-if='periodStyle === 12'>
+                <!-- <div class='minute-selector' v-if='periodStyle === 12'>
                   <div v-on:click.stop='changePeriod'>{{period}}</div>
+                </div> -->
+                <!-- <div class='time-separator' v-if='periodStyle === 12'>
+                  <span>:</span>
+                </div> -->
+                <div class='minute-selector'>
+                  <div>{{second}}</div>
                 </div>
               </div>
               <div class="choose-box">
@@ -59,6 +65,11 @@
                   <div class='scroll-hider' ref='minuteScrollerWrapper' :class='{showSelector: minuteSelectorVisible}'>
                     <ul ref='minuteScroller'>
                       <li v-for="(m, index) in minutes" :key="index" :class='{active: index === minuteIndex}' v-on:click.stop='setMinute(index, true)'>{{m}}</li>
+                    </ul>
+                  </div>
+                  <div class='scroll-hider' ref='secondScrollerWrapper' :class='{showSelector: minuteSelectorVisible}'>
+                    <ul ref='secondScroller'>
+                      <li v-for="(m, index) in minutes" :key="index" :class='{active: index === secondsIndex}' v-on:click.stop='setSeconds(index, true)'>{{m}}</li>
                     </ul>
                   </div>
               </div>
@@ -133,12 +144,13 @@ export default {
       days: [],
       weeks:[],
       monthIndex: 0,
+      dayIndexAll:0,
       hourIndex: 0,
       minuteIndex: 0,
       year: 2023,
       portsHolder: [],
       minute: '00',
-      hour: '01',
+      hour: '00',
       day: 1,
       minuteSelectorVisible: false,
       hourSelectorVisible: false,
@@ -146,7 +158,12 @@ export default {
       periodStyle: 12,
       monthStr: '',
       isborder1:false,
-      isborder2:false
+      isborder2:false,
+      isNoPorinter:false,
+      second:'00',
+      secondsIndex:0,
+      isNoPorinterMonthindex:0,
+      isNoPorinterYear:null
     }
   },
   // mounted() {
@@ -172,21 +189,33 @@ export default {
       this.year = this.timeStamp.getFullYear()
       this.monthIndex = this.timeStamp.getMonth()
       this.day = this.timeStamp.getDate()
-      this.hour = this.timeStamp.getHours()
+      if(!this.isNoPorinter){
+        this.dayIndexAll = this.day
+      }
+      if(this.value.length) {
+        this.hour = this.timeStamp.getHours()
       this.hourIndex = this.hour
       this.hour = this.hour < 10 ? '0' + this.hour : '' + this.hour
       this.minute = this.timeStamp.getMinutes()
       this.minuteIndex = this.minute
       this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
-      console.log(this.hour,this.hourIndex);
+      this.second = this.timeStamp.getSeconds()
+      this.secondsIndex = this.second
+      this.second = this.second < 10 ? '0' + this.second : '' + this.second
+      }
       this.updateCalendar()
-      this.setHour(this.hourIndex,true)
-      this.setMinute(this.minuteIndex,true)
-      console.log(this.$refs.hourScroller);
+      if(this.value.length){
+        this.setHour(this.hourIndex,true)
+        this.setMinute(this.minuteIndex,true)
+        this.setSeconds(this.secondsIndex)
+      }
       if(this.$refs.hourScroller){
         this.scrollTopHour()
       }
       if(this.$refs.minuteScroller){
+        this.scrollTopSecond()
+      }
+      if(this.$refs.secondScroller){
         this.scrollTopMinute()
       }
       days.forEach((day, idx) => {
@@ -262,6 +291,9 @@ export default {
       this.weeks = weeks;
     },
     setDay (index, port) {
+      if(!this.isNoPorinter){
+        this.dayIndexAll = index
+      }
       if (port) {
         this.activePort = index;
         this.day = parseInt(port, 10);
@@ -274,6 +306,10 @@ export default {
       if (closeAfterSet) {
         this.minuteSelectorVisible = false
       }
+    },
+    setSeconds(index,closeAfterSet){
+      this.secondsIndex = index
+      this.second = this.minutes[index]
     },
     setHour (index, closeAfterSet) {
       this.hourIndex = index
@@ -324,8 +360,14 @@ export default {
       let top = mHeight * (this.minuteIndex / (this.minutes.length - 1)) - (wHeight / 2)
       this.$refs.minuteScroller.scrollTop = top
     },
+    scrollTopSecond () {
+      let mHeight = this.$refs.secondScroller.scrollHeight || this.secondsIndex*30
+      let wHeight = this.$refs.secondScrollerWrapper.clientHeight
+      let top = mHeight * (this.secondsIndex / (this.minutes.length - 1)) - (wHeight / 2)
+      this.$refs.secondScroller.scrollTop = top
+    },
     scrollTopHour () {
-      let mHeight =this.$refs.hourScroller.scrollHeight || this.hourIndex*30
+      let mHeight =this.$refs.hourScroller.scrollHeight
       let wHeight = this.$refs.hourScrollerWrapper.clientHeight
       let top = mHeight * (this.hourIndex / (this.hours.length - 1)) - (wHeight / 2)
       console.log(top);
@@ -349,6 +391,8 @@ export default {
         this.hideCal = true
         this.isborder1 = false
         this.isborder2 = false
+        this.isNoPorinter = false
+        this.isStartTime = true
       }
     },
     // toggleCal () {
@@ -381,6 +425,7 @@ export default {
         }
       }
       d = this.dateFormat
+      console.log(this.year,this.day,this.monthIndex,this.hour);
       d = d.replace('YYYY', this.year)
       d = d.replace('DD', this.day < 10 ? '0' + this.day : this.day)
       let m = this.monthIndex + 1
@@ -388,11 +433,10 @@ export default {
       this.minute += ''
       d = d.replace(this.periodStyle === 24 ? 'H' : 'h', h.length < 2 ? '0' + h : '' + h )
       d = d.replace('i', this.minute.length < 2 ? '0' + this.minute : '' + this.minute)
-      d = d.replace('s', '00')
+      d = d.replace('s', this.second < 10 ? this.second : this.second)
       // this.$emit('input', d)
       this.saveChooseTime(d)
       console.log(this.date);
-      console.log(this.hourIndex);
     },
     saveChooseTime (time) {
       if (this.isStartTime) {
@@ -401,14 +445,19 @@ export default {
         this.$refs.inputDomR.focus()
         this.isborder2 = true
         this.isborder1 = false
-        console.log(this.date[1]);
+        this.isNoPorinter = true
+        this.isNoPorinterMonthindex = this.monthIndex
+        this.isNoPorinterYear = this.year
+        if(this.compareDate(this.date[0],this.date[1])){
+          this.date[1] = null
+        }
         if(this.date[1]){
           this.initDate(this.date[1])
         }
       } else {
         this.date[1] = time
         this.hideCal = true
-        // this.value = this.date
+        this.isNoPorinter = false
         this.isStartTime = true
         this.isborder2 = false
       }
@@ -417,7 +466,6 @@ export default {
     `*Creates a date object from a given date string
     */
     makeDateObject (val) {
-      console.log(val,112);
       // handle support for eu date format
       let dateAndTime = val.split(' ')
       let arr = []
@@ -475,6 +523,16 @@ export default {
       this.hideCal = false
       this.isborder1 = true
       this.$refs.inputDomL.focus()
+    },
+    // 比较时间大小
+    compareDate(date1,date2){
+      var oDate1 = new Date(date1);
+      var oDate2 = new Date(date2);
+      if(oDate1.getTime() > oDate2.getTime()){
+        return true; //第一个大
+      } else {
+        return false; //第二个大
+      }
     }
   },
   // created () {
@@ -606,6 +664,11 @@ export default {
   .borderB {
     border-bottom:2px solid #4096ff !important;
   }
+  .noPointer {
+    pointer-events: none;
+    background:#eee;
+    color:rgba(0,0,0,0.25)
+  }
   .date-box {
     display: flex;
     align-items: center;
@@ -617,10 +680,19 @@ export default {
       outline: none
     }
   }
+  .inputR {
+    text-align:right;
+  }
   .year-month-wrapper{
     display: flex;
     background-color: #fff;
     border-bottom: 1px solid #ddd;
+  }
+  .day-box {
+    display: flex;
+    justify-content:space-between;
+    flex-direction:column;
+    height: 200px;
   }
   .calender-div{
     min-width: 270px;
@@ -640,6 +712,7 @@ export default {
   }
   .left-box {
     width: 240px;
+    height: 273px;
     border-right: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
   }
@@ -658,7 +731,7 @@ export default {
       padding:7.2px;
       margin:-5px -13px -5px -5px;
       list-style-type: none;
-      height: 200px;
+      height: 234px;
       overflow: auto;
       width:55px;
       color: #999;
@@ -754,7 +827,7 @@ export default {
   }
   .time-picker{
     /* margin: 10px */
-    width: 100px;
+    // width: 100px;
   }
   .nav-t, .nav-d{
     font-weight: bold;
