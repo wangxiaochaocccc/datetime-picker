@@ -618,17 +618,11 @@ export default {
     dateFormat () {
       let f = 'YYYY-MM-DD h:i:s'
       let allowedFormats = [
-        'YYYY-MM-DD h:i:s', 'DD-MM-YYYY h:i:s', 'MM-DD-YYYY h:i:s',
-        'YYYY-MM-DD h:i', 'DD-MM-YYYY h:i', 'MM-DD-YYYY h:i',
-        'YYYY-MM-DD H:i:s', 'DD-MM-YYYY H:i:s', 'MM-DD-YYYY H:i:s',
-        'YYYY-MM-DD H:i', 'DD-MM-YYYY H:i', 'MM-DD-YYYY H:i',
-        'YYYY-MM-DD', 'DD-MM-YYYY', 'MM-DD-YYYY',
-        'YYYY/MM/DD', 'DD/MM/YYYY', 'MM/DD/YYYY',
-        'h:i:s', 'H:i:s', 'h:i', 'H:i',
-        'YYYY/MM/DD h:i:s', 'DD/MM/YYYY h:i:s', 'MM/DD/YYYY h:i:s',
-        'YYYY/MM/DD h:i', 'DD/MM/YYYY h:i', 'MM/DD/YYYY h:i',
-        'YYYY/MM/DD H:i:s', 'DD/MM/YYYY H:i:s', 'MM/DD/YYYY H:i:s',
-        'YYYY/MM/DD H:i', 'DD/MM/YYYY H:i', 'MM/DD/YYYY H:i'
+        'YYYY-MM-DD h:i:s',
+        'YYYY-MM-DD',
+        'YYYY/MM/DD',
+        'YYYY/MM/DD h:i:s',
+        'YYYY/MM/DD H:i:s', 
       ]
       if (this.format) {
         f = this.format
