@@ -26,7 +26,7 @@
               </div>
               <div class="day-box">
                 <div class="week" v-for="(week, weekIndex) in weeks" :key="weekIndex">
-                  <span :data1="dayIndexAll" class="port" v-for="(day, dayIndex) in week" :key="dayIndex" v-on:click.stop='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort,noPointer:(isNoPorinter&&(weekIndex*7 + dayIndex) < dayIndexAll)||(year<=isNoPorinterYear&&monthIndex<=isNoPorinterMonthindex)}'>
+                  <span :data1="dayIndexAll" class="port" v-for="(day, dayIndex) in week" :key="dayIndex" v-on:click.stop='setDay(weekIndex*7 + dayIndex, day)' :class='{activePort: (weekIndex*7 + dayIndex) === activePort,noPointer:(isNoPorinter&&(weekIndex*7 + dayIndex) < dayIndexAll&&monthIndex <=isNoPorinterMonthindex&&year<=isNoPorinterYear)||banDate}'>
                     {{day}}
                   </span>
                 </div>
@@ -650,6 +650,9 @@ export default {
     hideDate () {
       return this.dateFormat === 'h:i:s' || this.dateFormat === 'H:i:s'
         || this.dateFormat === 'h:i' || this.dateFormat === 'H:i'
+    },
+    banDate(){
+      return this.isNoPorinter&&(this.year < this.isNoPorinterYear || (this.monthIndex < this.isNoPorinterMonthindex&&this.year<=this.isNoPorinterYear))
     }
   }
 }
